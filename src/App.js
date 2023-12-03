@@ -4,30 +4,37 @@ import "./index.css";
 import axios from "axios";
 
 function App() {
+  const [tableData, setTableData] = useState([]);
+  const [inputdata, setInputData] = useState("");
+  const [isFilterApplied, setIsFilterApplied] = useState(false);
+  const [links, setLinks] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPage, setTotalPage] = useState(0);
+  const [dataPerPage, setDataPerPage] = useState(5)
+  const [url, setUrl] = useState("");
+  const inputRef = useRef();
+
   const options = {
     method: "GET",
-    url: "https://wft-geo-db.p.rapidapi.com/v1/geo/cities",
+    url: `https://wft-geo-db.p.rapidapi.com/v1/geo/cities${url}`,
     params: {
       countryIds: "IN",
       namePrefix: "del",
-      limit: "3",
+      limit: dataPerPage,
+      offset: (currentPage - 1) * 3,
     },
     headers: {
       "X-RapidAPI-Key": "da53145335mshf712b1766d7716ep1e4c5ejsn2cbde9143cd7",
       "X-RapidAPI-Host": process.env.REACT_APP_APIHOST,
     },
   };
-
-  const [tableData, setTableData] = useState([]);
-  const [inputdata, setInputData] = useState("");
-  const [isFilterApplied, setIsFilterApplied] = useState(false);
-  const inputRef = useRef();
-
   const fetchData = async () => {
     try {
       const response = await axios.request(options);
       setTableData(response?.data);
-      console.log(response?.data, "responce")
+      setLinks(response?.data?.links);
+      setTotalPage(response?.data?.metadata?.totalCount / 3);
+      console.log(response?.data, "responce");
     } catch (error) {
       console.error(error);
     }
@@ -47,7 +54,11 @@ function App() {
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, []);
+  }, [currentPage, dataPerPage]);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -91,12 +102,22 @@ function App() {
 
           <div className="search-shortcut">Ctrl+/</div>
         </form>
-        {isFilterApplied && tableData?.data?.length !== 3 && (
-          <button onClick={handleRemoveFilter}>Remove Filter</button>
-        )}
+        
       </div>
+      {isFilterApplied && tableData?.data?.length !== 3 && (
+          <button className="remove-filter" onClick={handleRemoveFilter}>Remove Filter</button>
+        )}
       <div className="table-container">
-        <Table tableData={tableData} />
+        <Table
+          tableData={tableData}
+          links={links}
+          setUrl={setUrl}
+          handlePageChange={handlePageChange}
+          currentPage={currentPage}
+          totalPage={totalPage}
+          dataPerPage={dataPerPage}
+          setDataPerPage= {setDataPerPage}
+        />
       </div>
     </div>
   );

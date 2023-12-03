@@ -1,58 +1,62 @@
 * {
   font-size: 16px;
-  color: rgb(33, 37, 41);
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
     Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji",
     "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 
 .search-container {
-  margin: 15px;
   display: flex;
   align-items: center;
+  width: 241px;
+  border: 1px solid rgb(192, 192, 192);
+  border-radius: 4px;
+  padding: 3px 0px;
 }
 .search-form {
   display: flex;
   align-items: center;
 }
 .search-input {
-  width: 241px;
-  background-color: rgb(255, 255, 255);
-  border-color: rgb(206, 212, 218);
-  padding: 6px 12px;
+  padding: 0px 0px 0px 10px;
+  border: none;
+  outline: none;
+}
+.search-shortcut {
+  border: 1px solid rgb(192, 192, 192);
   border-radius: 4px;
+  padding: 4px;
+  font-size: 13px;
+  color: rgb(130, 130, 130);
 }
-.search-input:focus {
+.search-container:active {
   border-color: #7952b3;
   box-shadow: 0 0 0 3px rgba(121, 82, 179, 0.25);
 }
-
-.search-input:active {
-  border-color: #7952b3;
-  box-shadow: 0 0 0 3px rgba(121, 82, 179, 0.25);
-}
-.search-input:disabled {
+.search-container:disabled {
   background-color: rgb(233, 236, 239);
 }
 
+.remove-filter {
+  margin-top: 10px;
+  border: 1px solid rgb(192, 192, 192);
+  background-color: transparent;
+}
+
 table {
-  margin-top: 50px;
+  margin-top: 30px;
   border-collapse: collapse;
   text-align: center;
 }
 
 th,
 td {
-  border: 1px solid rgb(222, 226, 230);
+  border: 1px solid rgb(192, 192, 192);
   padding: 8px 20px;
 }
 
 th {
   font-weight: 700;
-}
-
-button {
-  cursor: pointer;
 }
 
 .country-name {
@@ -62,5 +66,19 @@ button {
 .country-name img {
   height: 40px;
   width: 40px;
+  margin-right: 20px;
+}
+.pagination {
+  margin-top: 20px;
+}
+.pagination button {
+  background-color: transparent;
+  outline: none;
+  margin-right: 20px;
+  border: 1px solid rgb(192, 192, 192);
+  padding: 3px 10px;
+  border-radius: 3px;
+}
+.page-no {
   margin-right: 20px;
 }

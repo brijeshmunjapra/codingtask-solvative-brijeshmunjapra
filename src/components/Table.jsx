@@ -1,6 +1,6 @@
 import React from "react";
 
-const Table = ({ tableData }) => {
+const Table = ({ tableData, handlePageChange, currentPage, totalPage, dataPerPage, setDataPerPage }) => {
   return (
     <>
       <table>
@@ -27,9 +27,32 @@ const Table = ({ tableData }) => {
           ))}
         </tbody>
       </table>
-      <div>
-        <button>Prev</button>
-        <button>Next</button>
+      <div className="pagination">
+        <button
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage <= 1 ? true : false}
+        >
+          Prev
+        </button>
+        <span className="page-no">{currentPage}</span>
+        <button
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage >= totalPage ? true : false}
+        >
+          Next
+        </button>
+        {'No of Rows '}
+        <select
+        id="numberSelect"
+        value={dataPerPage}
+        onChange={(e)=>setDataPerPage(e.target.value)}
+      >
+        {Array.from({ length: 6 }, (_, index) => (
+          <option key={index} value={index + 5}>
+            {index + 5}
+          </option>
+        ))}
+      </select>
       </div>
     </>
   );
