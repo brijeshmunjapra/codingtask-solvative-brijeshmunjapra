@@ -6,25 +6,28 @@ import axios from "axios";
 function App() {
   const [tableData, setTableData] = useState([]);
   const [inputdata, setInputData] = useState("");
+  const [searchParams, setSearchParams] = useState('');
   const [isFilterApplied, setIsFilterApplied] = useState(false);
-  const [links, setLinks] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPage, setTotalPage] = useState(0);
   const [dataPerPage, setDataPerPage] = useState(5)
-  const [url, setUrl] = useState("");
   const inputRef = useRef();
+
+  // Environment variable console to check -------------------------
+
+  // console.log(process.env.REACT_APP_APIKEY, process.env.REACT_APP_APIHOST);
 
   const options = {
     method: "GET",
-    url: `https://wft-geo-db.p.rapidapi.com/v1/geo/cities${url}`,
+    url: `https://wft-geo-db.p.rapidapi.com/v1/geo/cities`,
     params: {
       countryIds: "IN",
-      namePrefix: "del",
+      namePrefix: searchParams,
       limit: dataPerPage,
-      offset: (currentPage - 1) * 3,
+      offset: (currentPage - 1) * dataPerPage,
     },
     headers: {
-      "X-RapidAPI-Key": "da53145335mshf712b1766d7716ep1e4c5ejsn2cbde9143cd7",
+      "X-RapidAPI-Key": process.env.REACT_APP_APIKEY ,
       "X-RapidAPI-Host": process.env.REACT_APP_APIHOST,
     },
   };
@@ -32,9 +35,7 @@ function App() {
     try {
       const response = await axios.request(options);
       setTableData(response?.data);
-      setLinks(response?.data?.links);
-      setTotalPage(response?.data?.metadata?.totalCount / 3);
-      console.log(response?.data, "responce");
+      setTotalPage(response?.data?.metadata?.totalCount / dataPerPage);
     } catch (error) {
       console.error(error);
     }
@@ -54,43 +55,30 @@ function App() {
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [currentPage, dataPerPage]);
+  }, [currentPage, dataPerPage, searchParams]);
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
-
+  
   const handleSearch = (e) => {
-    e.preventDefault();
-    let temp = tableData?.data;
-
-    temp = temp.filter((result) => {
-      const nameMatch = result.name
-        .toLowerCase()
-        .includes(inputdata.toLowerCase());
-      const countryMatch = result.country
-        .toLowerCase()
-        .includes(inputdata.toLowerCase());
-      return nameMatch || countryMatch;
-    });
-
-    setTableData((prevData) => ({
-      ...prevData,
-      data: temp,
-    }));
+    e.preventDefault()
     setIsFilterApplied(true);
+    setSearchParams(inputdata);
+    setCurrentPage(1);
   };
 
   const handleRemoveFilter = () => {
     setIsFilterApplied(false);
-    fetchData();
     setInputData("");
+    setSearchParams("")
+    setCurrentPage(1);
   };
 
   return (
     <div className="App">
       <div className="search-container">
-        <form onSubmit={(e) => handleSearch(e)} className="search-form">
+        <form onSubmit={(e)=>handleSearch(e)} className="search-form">
           <input
             className="search-input"
             type="text"
@@ -104,19 +92,18 @@ function App() {
         </form>
         
       </div>
-      {isFilterApplied && tableData?.data?.length !== 3 && (
+      {isFilterApplied && tableData?.data?.length !== dataPerPage && (
           <button className="remove-filter" onClick={handleRemoveFilter}>Remove Filter</button>
         )}
       <div className="table-container">
         <Table
           tableData={tableData}
-          links={links}
-          setUrl={setUrl}
           handlePageChange={handlePageChange}
           currentPage={currentPage}
           totalPage={totalPage}
           dataPerPage={dataPerPage}
           setDataPerPage= {setDataPerPage}
+          setCurrentPage = {setCurrentPage}
         />
       </div>
     </div>
