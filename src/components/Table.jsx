@@ -1,6 +1,6 @@
 import React from "react";
 
-const Table = ({ tableData, handlePageChange, currentPage, totalPage, dataPerPage, setDataPerPage }) => {
+const Table = ({ tableData, handlePageChange, currentPage, totalPage, dataPerPage, setDataPerPage, setCurrentPage }) => {
   return (
     <>
       <table>
@@ -45,7 +45,10 @@ const Table = ({ tableData, handlePageChange, currentPage, totalPage, dataPerPag
         <select
         id="numberSelect"
         value={dataPerPage}
-        onChange={(e)=>setDataPerPage(e.target.value)}
+        onChange={(e)=>{
+          setCurrentPage(1);
+          setDataPerPage(e.target.value)
+          }}
       >
         {Array.from({ length: 6 }, (_, index) => (
           <option key={index} value={index + 5}>
